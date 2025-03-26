@@ -6,8 +6,8 @@ namespace AspNetCore2.Data;
 public class SchoolContext : DbContext
 {
     public DbSet<Student> Students { get; set; }
-    DbSet<Group> Groups { get; set; }
-    DbSet<Mark> Marks { get; set; }
+    public DbSet<Group> Groups { get; set; }
+    public DbSet<Mark> Marks { get; set; }
     DbSet<Subject> Subjects { get; set; }
     DbSet<SubjectTeacher> SubjectTeachers { get; set; }
     DbSet<Teacher> Teachers { get; set; }

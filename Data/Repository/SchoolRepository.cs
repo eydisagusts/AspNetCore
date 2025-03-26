@@ -139,69 +139,256 @@ public class SchoolRepository : IRepository
             }
         }
     }
-    
-    
+
+
     // Group
 
-    public Task<List<GroupDTO>> GetAllGroupsAsync()
+    public async Task<List<GroupDTO>> GetAllGroupsAsync()
     {
-        throw new NotImplementedException();
+        List<Group> groups;
+
+        using (var db = _dbContext)
+        {
+            groups = await db.Groups.Include(s => s.Students).ToListAsync();
+        }
+
+        List<GroupDTO> result = new List<GroupDTO>();
+
+        foreach (Group group in groups)
+        {
+            GroupDTO groupDto = new GroupDTO();
+
+            groupDto.GroupId = group.GroupId;
+            groupDto.Name = group.Name;
+
+            result.Add(groupDto);
+        }
+
+        return result;
     }
 
-    public Task<GroupDTO> GetGroupByIdAsync(int id)
+    public async Task<GroupDTO> GetGroupByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        Group? g;
+
+        using (var db = _dbContext)
+        {
+            g = await db.Groups.Include(s => s.Students).FirstOrDefaultAsync(x => x.GroupId == id);
+        }
+
+        if (g == null)
+        {
+            return null;
+        }
+
+        GroupDTO groupDto = new GroupDTO()
+        {
+            GroupId = g.GroupId,
+            Name = g.Name,
+            Students = g.Students.Select(student => new StudentGroupDTO
+            {
+                StudentId = student.StudentId,
+                FirstName = student.FirstName,
+                LastName = student.LastName,
+            }).ToList()
+        };
+
+        return groupDto;
     }
 
-    public Task CreateGroupAsync(GroupDTO dto)
+    public async Task CreateGroupAsync(GroupDTO dto)
     {
-        throw new NotImplementedException();
+        using (var db = _dbContext)
+        {
+            Group group = new Group
+            {
+                GroupId = dto.GroupId,
+                Name = dto.Name
+            };
+
+            await db.Groups.AddAsync(group);
+            await db.SaveChangesAsync();
+        }
     }
 
-    public Task<GroupDTO> UpdateGroupAsync(int id, GroupDTO dto)
+    public async Task<GroupDTO> UpdateGroupAsync(int id, GroupDTO dto)
     {
-        throw new NotImplementedException();
+        using (var db = _dbContext)
+        {
+            var groupToUpdate = await db.Groups
+                .FirstOrDefaultAsync(x => x.GroupId == id);
+
+            if (groupToUpdate == null)
+            {
+                return null;
+            }
+
+            groupToUpdate.GroupId = dto.GroupId;
+            groupToUpdate.Name = dto.Name;
+
+            await db.SaveChangesAsync();
+
+            return new GroupDTO
+            {
+                GroupId = groupToUpdate.GroupId,
+                Name = groupToUpdate.Name,
+            };
+        }
     }
 
-    public Task<bool> DeleteGroupAsync(int id)
+    public async Task<bool> DeleteGroupAsync(int id)
     {
-        throw new NotImplementedException();
+        Group groupToDelete;
+
+        using (var db = _dbContext)
+        {
+            groupToDelete = db.Groups.FirstOrDefault(x => x.GroupId == id);
+
+            if (groupToDelete == null)
+            {
+                return false;
+            }
+            else
+            {
+                db.Groups.Remove(groupToDelete);
+                await db.SaveChangesAsync();
+                return true;
+            }
+        }
     }
-    
-    
-    
+
+
+
     // Marks
 
-    public Task<List<MarkDTO>> GetAllMarksAsync()
+    public async Task<List<MarkDTO>> GetAllMarksAsync()
     {
-        throw new NotImplementedException();
+        {
+            using (var db = _dbContext)
+            {
+                var marks = await db.Marks
+                    .Include(m => m.Student)
+                    .Include(m => m.Subject)
+                    .ToListAsync();
+
+                List<MarkDTO> result = new List<MarkDTO>();
+
+                foreach (var mark in marks)
+                {
+                    var markDto = new MarkDTO
+                    {
+                        MarkId = mark.MarkId,
+                        StudentId = mark.StudentId,
+                        SubjectId = mark.SubjectId,
+                        DateTime = mark.DateTime,
+                        MarkValue = mark.MarkValue
+                    };
+
+                    result.Add(markDto);
+                }
+
+                return result;
+            }
+        }
     }
 
-    public Task<MarkDTO> GetMarkByIdAsync(int id)
+    public async Task<MarkDTO> GetMarkByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        Mark? m;
+
+        using (var db = _dbContext)
+        {
+            m = await db.Marks.FirstOrDefaultAsync(x => x.MarkId == id);
+        }
+
+        if (m == null)
+        {
+            return null;
+        }
+
+        MarkDTO markDto = new MarkDTO()
+        {
+            MarkId = m.MarkId,
+            MarkValue = m.MarkValue,
+            StudentId = m.StudentId,
+            SubjectId = m.SubjectId,
+            DateTime = m.DateTime,
+        };
+
+        return markDto;
     }
 
-    public Task CreateMarkAsync(MarkDTO dto)
+    public async Task CreateMarkAsync(MarkDTO dto)
     {
-        throw new NotImplementedException();
+        using (var db = _dbContext)
+        {
+            Mark mark = new Mark
+            {
+                StudentId = dto.StudentId,
+                SubjectId = dto.SubjectId,
+                DateTime = dto.DateTime,
+                MarkValue = dto.MarkValue,
+            };
+
+            await db.Marks.AddAsync(mark);
+            await db.SaveChangesAsync();
+        }
     }
 
-    public Task<MarkDTO> UpdateMarkAsync(int id, MarkDTO dto)
+    public async Task<MarkDTO> UpdateMarkAsync(int id, MarkDTO dto)
     {
-        throw new NotImplementedException();
+        using (var db = _dbContext)
+        {
+            var markToUpdate = await db.Marks.FirstOrDefaultAsync(x => x.MarkId == id);
+
+            if (markToUpdate == null)
+            {
+                return null;
+            }
+            
+            markToUpdate.DateTime = dto.DateTime;
+            markToUpdate.MarkValue = dto.MarkValue;
+
+            await db.SaveChangesAsync();
+
+            return new MarkDTO()
+            {
+                MarkId = markToUpdate.MarkId,
+                StudentId = markToUpdate.StudentId,
+                SubjectId = markToUpdate.SubjectId,
+                DateTime = markToUpdate.DateTime,
+                MarkValue = markToUpdate.MarkValue,
+            };
+        }
     }
 
-    public Task<bool> DeleteMarkAsync(int id)
+    public async Task<bool> DeleteMarkAsync(int id)
     {
-        throw new NotImplementedException();
+        Mark markToDelete;
+
+        using (var db = _dbContext)
+        {
+            markToDelete = await db.Marks.FirstOrDefaultAsync(x => x.MarkId == id);
+
+            if (markToDelete == null)
+            {
+                return false;
+            }
+            else
+            {
+
+                db.Marks.Remove(markToDelete);
+                await db.SaveChangesAsync();
+                return true;
+            }
+        }
     }
 
+
+
+// Subject
     
-    
-    // Subject
-    
-    public Task<List<SubjectReadDTO>> GetAllSubjectsAsync()
+    public async Task<List<SubjectReadDTO>> GetAllSubjectsAsync()
     {
         throw new NotImplementedException();
     }

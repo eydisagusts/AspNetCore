@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/eydisla/RiderProjects/AspNetCore2/AspNetCore2/AspNetCore2.csproj": {}
+    "/Users/eydisagusts/Desktop/AspNetCore/AspNetCore2.csproj": {}
   },
   "projects": {
-    "/Users/eydisla/RiderProjects/AspNetCore2/AspNetCore2/AspNetCore2.csproj": {
+    "/Users/eydisagusts/Desktop/AspNetCore/AspNetCore2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/eydisla/RiderProjects/AspNetCore2/AspNetCore2/AspNetCore2.csproj",
+        "projectUniqueName": "/Users/eydisagusts/Desktop/AspNetCore/AspNetCore2.csproj",
         "projectName": "AspNetCore2",
-        "projectPath": "/Users/eydisla/RiderProjects/AspNetCore2/AspNetCore2/AspNetCore2.csproj",
-        "packagesPath": "/Users/eydisla/.nuget/packages/",
-        "outputPath": "/Users/eydisla/RiderProjects/AspNetCore2/AspNetCore2/obj/",
+        "projectPath": "/Users/eydisagusts/Desktop/AspNetCore/AspNetCore2.csproj",
+        "packagesPath": "/Users/eydisagusts/.nuget/packages/",
+        "outputPath": "/Users/eydisagusts/Desktop/AspNetCore/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/eydisla/.nuget/NuGet/NuGet.Config"
+          "/Users/eydisagusts/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"

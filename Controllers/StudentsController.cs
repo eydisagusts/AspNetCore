@@ -74,9 +74,9 @@ public class StudentsController : ControllerBase
                 return BadRequest(ModelState);
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            return StatusCode(500, ex.Message);
+            return StatusCode(500);
         }
     }
     
@@ -97,9 +97,9 @@ public class StudentsController : ControllerBase
                 return Ok(student);
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            return StatusCode(500, ex.Message);
+            return StatusCode(500);
         }
     }
 
