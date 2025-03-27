@@ -20,7 +20,7 @@ public class GroupsController : ControllerBase
     // Read
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<GroupDTO>>> GetAllGroups()
+    public async Task<ActionResult<List<GroupDTO>>> GetAllGroups()
     {
         try
         {

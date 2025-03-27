@@ -1,11 +1,12 @@
 {
   "Version": 1,
-  "Hash": "3uVHbU8K+jfnK7b12NUmDeiJgwdeGqiuM7iADSWqcfM=",
+  "Hash": "OnGc+YPKojyajL/cZH9xniMQsj73EjmV0Rgh2xEPRuA=",
   "Source": "AspNetCore2",
   "BasePath": "_content/AspNetCore2",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
   "DiscoveryPatterns": [],
-  "Assets": []
+  "Assets": [],
+  "Endpoints": []
 }

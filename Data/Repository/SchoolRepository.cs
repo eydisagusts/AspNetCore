@@ -1,3 +1,4 @@
+using AspNetCore2.Controllers;
 using AspNetCore2.Data.Interfaces;
 using AspNetCore2.Modles;
 using AspNetCore2.Modles.DTO;
@@ -345,7 +346,7 @@ public class SchoolRepository : IRepository
             {
                 return null;
             }
-            
+
             markToUpdate.DateTime = dto.DateTime;
             markToUpdate.MarkValue = dto.MarkValue;
 
@@ -376,7 +377,6 @@ public class SchoolRepository : IRepository
             }
             else
             {
-
                 db.Marks.Remove(markToDelete);
                 await db.SaveChangesAsync();
                 return true;
@@ -387,81 +387,260 @@ public class SchoolRepository : IRepository
 
 
 // Subject
-    
+
     public async Task<List<SubjectReadDTO>> GetAllSubjectsAsync()
     {
-        throw new NotImplementedException();
+
+        List<Subject> subjects;
+
+        using (var db = _dbContext)
+        {
+            subjects = await db.Subjects
+                .Include(m => m.Marks)
+                .ToListAsync();
+        }
+
+        List<SubjectReadDTO> result = new List<SubjectReadDTO>();
+
+        foreach (Subject subject in subjects)
+        {
+            SubjectReadDTO subjectToAdd = new SubjectReadDTO();
+
+            subjectToAdd.SubjectId = subject.SubjectId;
+            subjectToAdd.Title = subject.Title;
+            subjectToAdd.MarkCount = subject.Marks.Count;
+
+            result.Add(subjectToAdd);
+        }
+
+        return result;
     }
 
-    public Task<SubjectReadDTO> GetSubjectByIdAsync(int id)
+    public async Task<SubjectDetailsDTO> GetSubjectByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        Subject s;
+
+        using (var db = _dbContext)
+        {
+            s = await db.Subjects
+                .Include(m => m.Marks)
+                .FirstOrDefaultAsync(x => x.SubjectId == id);
+        }
+
+        SubjectDetailsDTO subjectToReturn = new SubjectDetailsDTO
+        {
+            SubjectId = s.SubjectId,
+            Title = s.Title,
+            Marks = s.Marks.Select(m => new MarkSubjectDTO
+            {
+                MarkId = m.MarkId,
+                StudentId = m.StudentId,
+                MarkValue = m.MarkValue,
+                DateTime = m.DateTime
+            }).ToList()
+        };
+        return subjectToReturn;
     }
 
-    public Task CreateSubjectAsync(SubjectCreateDTO dto)
+    public async Task CreateSubjectAsync(SubjectCreateDTO dto)
     {
-        throw new NotImplementedException();
+        using (var db = _dbContext)
+        {
+            Subject subject = new Subject
+            {
+                Title = dto.Title,
+            };
+
+            await db.Subjects.AddAsync(subject);
+            await db.SaveChangesAsync();
+        }
     }
 
-    public Task<SubjectReadDTO> UpdateSubjectAsync(int id, SubjectUpdateDTO dto)
+    public async Task<SubjectReadDTO> UpdateSubjectAsync(int id, SubjectUpdateDTO dto)
     {
-        throw new NotImplementedException();
+        using (var db = _dbContext)
+        {
+            var subjectToUpdate = await db.Subjects.FirstOrDefaultAsync(x => x.SubjectId == id);
+
+            if (subjectToUpdate == null)
+            {
+                return null;
+            }
+
+            subjectToUpdate.Title = dto.Title;
+
+            await db.SaveChangesAsync();
+
+            return new SubjectReadDTO()
+            {
+                SubjectId = subjectToUpdate.SubjectId,
+                Title = subjectToUpdate.Title,
+            };
+        }
     }
 
-    public Task<bool> DeleteSubjectAsync(int id)
+    public async Task<bool> DeleteSubjectAsync(int id)
     {
-        throw new NotImplementedException();
+        Subject subjectToDelete;
+
+        using (var db = _dbContext)
+        {
+            subjectToDelete = await db.Subjects.FirstOrDefaultAsync(x => x.SubjectId == id);
+
+            if (subjectToDelete == null)
+            {
+                return false;
+            }
+            else
+            {
+                db.Subjects.Remove(subjectToDelete);
+                await db.SaveChangesAsync();
+                return true;
+            }
+        }
     }
-    
-    
-    
+
+
     // SubjectTeacher
-
-    public Task<List<SubjectTeacherReadDTO>> GetAllSubjectTeachersAsync()
+    public async Task<List<SubjectTeacherDTO>> GetAllSubjectTeachersAsync()
     {
-        throw new NotImplementedException();
+        List<SubjectTeacher> subTeach;
+
+        using (var db = _dbContext)
+        {
+            subTeach = await db.SubjectTeachers.ToListAsync();
+        }
+
+        List<SubjectTeacherDTO> listToReturn = new List<SubjectTeacherDTO>();
+
+        foreach (SubjectTeacher subt in subTeach)
+        {
+            SubjectTeacherDTO subtToAdd = new SubjectTeacherDTO();
+
+            subtToAdd.Id = subt.Id;
+            subtToAdd.SubjectId = subt.SubjectId;
+            //subtToAdd.SubjectTitle = subt.Subject.Title;
+            subtToAdd.TeacherId = subt.TeacherId;
+
+            listToReturn.Add(subtToAdd);
+        }
+
+        return listToReturn;
     }
 
-    public Task<SubjectTeacherReadDTO> GetSubjectTeacherByIdAsync(int id)
+    public async Task<SubjectTeacherDTO> GetSubjectTeacherByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        SubjectTeacher subteach;
+
+        using (var db = _dbContext)
+        {
+            subteach = await db.SubjectTeachers.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        SubjectTeacherDTO subTeachToReturn = new SubjectTeacherDTO();
+
+        subTeachToReturn.Id = subteach.Id;
+        subTeachToReturn.SubjectId = subteach.SubjectId;
+        subTeachToReturn.TeacherId = subteach.TeacherId;
+
+        return subTeachToReturn;
     }
 
-    public Task CreateSubjectTeacherAsync(SubjectTeacherCreateDTO dto)
+    public async Task<List<TeacherDTO>> GetAllTeachersAsync()
     {
-        throw new NotImplementedException();
+        List<Teacher> teachers;
+
+        using (var db = _dbContext)
+        {
+            teachers = await db.Teachers
+                .Include(s => s.SubjectsTeachers)
+                .ToListAsync();
+        }
+
+        List<TeacherDTO> listToReturn = new List<TeacherDTO>();
+
+        foreach (Teacher teach in teachers)
+        {
+            TeacherDTO teachToAdd = new TeacherDTO();
+
+            teachToAdd.TeacherId = teach.TeacherId;
+            teachToAdd.FirstName = teach.FirstName; 
+            teachToAdd.LastName = teach.LastName;
+        
+            listToReturn.Add(teachToAdd);
+        }
+
+        return listToReturn;
     }
 
-    public Task<bool> DeleteSubjectTeacherAsync(int id)
+    public async Task<TeacherDTO> GetTeacherByIdAsync(int id)
     {
-        throw new NotImplementedException();
-    }
-    
-    
-    // Teacher
+        Teacher t;
 
-    public Task<List<TeacherReadDTO>> GetAllTeachersAsync()
-    {
-        throw new NotImplementedException();
-    }
+        using (var db = _dbContext)
+        {
+            t = await db.Teachers.FirstOrDefaultAsync(x => x.TeacherId == id);
+        }
 
-    public Task<TeacherReadDTO> GetTeacherByIdAsync(int id)
-    {
-        throw new NotImplementedException();
-    }
+        TeacherDTO teachToReturn = new TeacherDTO
+        {
+            TeacherId = t.TeacherId,
+            FirstName = t.FirstName,
+            LastName = t.LastName
+        };
 
-    public Task CreateTeacherAsync(TeacherCreateDTO teacher)
-    {
-        throw new NotImplementedException();
+        return teachToReturn;
     }
 
-    public Task<TeacherReadDTO> UpdateTeacherAsync(int id, TeacherUpdateDTO dto)
+    public async Task CreateTeacherAsync(Teacher teacher)
     {
-        throw new NotImplementedException();
+        using (var db = _dbContext)
+        {
+            await db.Teachers.AddAsync(teacher);
+            await db.SaveChangesAsync();
+        }
     }
 
-    public Task<bool> DeleteTeacherAsync(int id)
+    public async Task<Teacher> UpdateTeacherAsync(int id, Teacher teacher)
     {
-        throw new NotImplementedException();
+        Teacher UpdateTeacher;
+
+        using (var db = _dbContext)
+        {
+            UpdateTeacher = await db.Teachers.FirstOrDefaultAsync(t => t.TeacherId == id);
+
+            if (UpdateTeacher == null)
+            {
+                return null;
+            }
+
+            UpdateTeacher.FirstName = teacher.FirstName;
+            UpdateTeacher.LastName = teacher.LastName;
+
+            await db.SaveChangesAsync();
+
+            return UpdateTeacher;
+        }
+    }
+
+    public async Task<bool> DeleteTeacherAsync(int id)
+    {
+        Teacher teacherToDelete;
+
+        using (var db = _dbContext)
+        {
+            teacherToDelete = await db.Teachers.FirstOrDefaultAsync(t => t.TeacherId == id);
+
+            if (teacherToDelete == null)
+            {
+                return false;
+            }
+            else
+            {
+                db.Teachers.Remove(teacherToDelete);
+                await db.SaveChangesAsync();
+                return true;
+            }
+        }
     }
 }

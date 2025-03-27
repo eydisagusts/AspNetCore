@@ -45,33 +45,29 @@ public interface IRepository
     // Subject
     Task<List<SubjectReadDTO>> GetAllSubjectsAsync();
     
-    Task<SubjectReadDTO> GetSubjectByIdAsync(int id);
+    Task<SubjectDetailsDTO> GetSubjectByIdAsync(int id);
     
     Task CreateSubjectAsync(SubjectCreateDTO dto);
     
-    Task<SubjectReadDTO> UpdateSubjectAsync(int id, SubjectUpdateDTO dto);
+    Task<SubjectReadDTO> UpdateSubjectAsync(int id, SubjectUpdateDTO subject);
     
     Task<bool> DeleteSubjectAsync(int id);
     
     
     // SubjectTeacher
-    Task<List<SubjectTeacherReadDTO>> GetAllSubjectTeachersAsync();
+    Task<List<SubjectTeacherDTO>> GetAllSubjectTeachersAsync();
     
-    Task<SubjectTeacherReadDTO> GetSubjectTeacherByIdAsync(int id);
-    
-    Task CreateSubjectTeacherAsync(SubjectTeacherCreateDTO dto);
-    
-    Task<bool> DeleteSubjectTeacherAsync(int id);
+    Task<SubjectTeacherDTO> GetSubjectTeacherByIdAsync(int id);
     
     
     // Teacher
-    Task<List<TeacherReadDTO>> GetAllTeachersAsync();
+    Task<List<TeacherDTO>> GetAllTeachersAsync();
     
-    Task<TeacherReadDTO> GetTeacherByIdAsync(int id);
+    Task<TeacherDTO> GetTeacherByIdAsync(int id);
     
-    Task CreateTeacherAsync(TeacherCreateDTO teacher);
+    Task CreateTeacherAsync(Teacher teacher);
     
-    Task<TeacherReadDTO> UpdateTeacherAsync(int id, TeacherUpdateDTO dto);
+    Task<Teacher> UpdateTeacherAsync(int id, Teacher teacher);
     
     Task<bool> DeleteTeacherAsync(int id);
     

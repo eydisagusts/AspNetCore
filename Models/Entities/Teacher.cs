@@ -14,5 +14,6 @@ public class Teacher
     [MaxLength(255)]
     public string LastName { get; set; }
     
-    List<SubjectTeacher> subjectsTeachers = new List<SubjectTeacher>();
+    public List<SubjectTeacher> SubjectsTeachers { get; set; } = new List<SubjectTeacher>();
+
 }
