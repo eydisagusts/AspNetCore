@@ -34,11 +34,11 @@ public class GroupsController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<GroupDTO>> GetGroupById(int id)
+    public async Task<ActionResult<GroupDetailsDTO>> GetGroupById(int id)
     {
         try
         {
-            GroupDTO group = await _repository.GetGroupByIdAsync(id);
+            GroupDetailsDTO group = await _repository.GetGroupByIdAsync(id);
             
             if (group == null)
             {

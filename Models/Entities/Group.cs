@@ -8,7 +8,7 @@ public class Group
     
     [Required]
     [MaxLength(255)]
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     // Each Group can have multiple Students
     public List<Student> Students { get; set; } = new List<Student>();

@@ -8,5 +8,5 @@ public class TeacherDTO
     
     public string LastName { get; set; } = null!;
     
-    public List<SubjectTeacher> SubjectsTeachers { get; set; } = new List<SubjectTeacher>();
+    
 }

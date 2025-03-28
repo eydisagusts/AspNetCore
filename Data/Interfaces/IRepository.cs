@@ -21,7 +21,7 @@ public interface IRepository
     // Group
     Task<List<GroupDTO>> GetAllGroupsAsync();
     
-    Task<GroupDTO> GetGroupByIdAsync(int id);
+    Task<GroupDetailsDTO> GetGroupByIdAsync(int id);
     
     Task CreateGroupAsync(GroupDTO dto);
     

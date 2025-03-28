@@ -1,10 +1,7 @@
-using AspNetCore2.Controllers;
 using AspNetCore2.Data.Interfaces;
 using AspNetCore2.Modles;
 using AspNetCore2.Modles.DTO;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics.Internal;
 
 namespace AspNetCore2.Data.Repository;
 
@@ -38,7 +35,6 @@ public class SchoolRepository : IRepository
             studToAdd.FirstName = stud.FirstName;
             studToAdd.LastName = stud.LastName;
             studToAdd.GroupId = stud.GroupId;
-            studToAdd.GroupName = stud.Group.Name;
 
             result.Add(studToAdd);
         }
@@ -115,7 +111,6 @@ public class SchoolRepository : IRepository
                 FirstName = studentToUpdate.FirstName,
                 LastName = studentToUpdate.LastName,
                 GroupId = studentToUpdate.GroupId,
-                GroupName = studentToUpdate.Group.Name
             };
         }
     }
@@ -168,7 +163,7 @@ public class SchoolRepository : IRepository
         return result;
     }
 
-    public async Task<GroupDTO> GetGroupByIdAsync(int id)
+    public async Task<GroupDetailsDTO> GetGroupByIdAsync(int id)
     {
         Group? g;
 
@@ -182,7 +177,7 @@ public class SchoolRepository : IRepository
             return null;
         }
 
-        GroupDTO groupDto = new GroupDTO()
+        GroupDetailsDTO groupDto = new GroupDetailsDTO()
         {
             GroupId = g.GroupId,
             Name = g.Name,
@@ -408,7 +403,6 @@ public class SchoolRepository : IRepository
 
             subjectToAdd.SubjectId = subject.SubjectId;
             subjectToAdd.Title = subject.Title;
-            subjectToAdd.MarkCount = subject.Marks.Count;
 
             result.Add(subjectToAdd);
         }
@@ -566,7 +560,7 @@ public class SchoolRepository : IRepository
             teachToAdd.TeacherId = teach.TeacherId;
             teachToAdd.FirstName = teach.FirstName; 
             teachToAdd.LastName = teach.LastName;
-        
+            
             listToReturn.Add(teachToAdd);
         }
 
